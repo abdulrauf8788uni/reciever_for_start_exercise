@@ -1,6 +1,8 @@
 import multiprocessing
 from .dummy_main import start as start_exercise_function
 import os
+import requests
+import json
 
 def machine_available():
     FILENAME = os.path.dirname(__file__) + '\\status.txt'
@@ -78,4 +80,11 @@ class MachineManager:
         return True
 
     def _save_workout_in_database(self, data):
-        pass
+        server_url = 'http://localhost:8000/add_workout/'
+        if data:
+            data['auth_token'] = os.environ.get('AUTH_TOKEN')
+            request = requests.post(server_url, data=data)
+            if request.status_code == 201:
+                print("Workout added successfully")
+            else:
+                print(f"Error adding workout : {request.status_code}")
